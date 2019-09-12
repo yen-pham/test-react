@@ -9,6 +9,8 @@ var config = {
     appId: "1:133952806281:web:1554ec568ec94f8b4b5558"
   };
   // Initialize Firebase
-  export const firebaseConnect = firebase.initializeApp(config);
+  // export const firebaseConnect = firebase.initializeApp(config);
   // var data = firebase.database().ref('login');
+  firebase.initializeApp(config);
+   export const users = firebase.database().ref('login');
   

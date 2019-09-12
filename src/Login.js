@@ -5,33 +5,15 @@ import {
     Link
   } from 'react-router-dom';
   import * as firebase from 'firebase';
-  import {firebaseConnect} from './firebaseConnect';
+  import {users} from './firebaseConnect';
 
 class Login extends Component {
 
     constructor(props) {
         super(props);
         this.state ={
-            email : "",
-            password:"",
             data :[]
         }
-    }
-
-    componentDidMount(){
-        var connectData =firebase.database().ref('login'); 
-        var arrayData =[];
-        firebaseConnect.on('value',(users)=>{
-            users.map((value,key) => {
-                const email =value.email;
-                const password =value.password;
-                arrayData.push({          
-                  email:email,
-                  password:password
-                })
-         console.log(snapshot.val());  
-       });
-      })
     }
     isChange  = (event) => {
         const name = event.target.name;
@@ -40,22 +22,38 @@ class Login extends Component {
             {[name] : value}
         );
     }
+
+    componentWillMount() {
+        users.on('value',(userList)=>{
+            var arrayData =[];
+            userList.forEach(element => {
+            const email =element.val().email;
+            const password =element.val().password;
+            arrayData.push({
+              email:email,
+              password:password
+            })
+            this.setState(
+              {
+                data:arrayData
+              }
+            );
+          });
+        })
+        
+      }
     loadData  = (email,password) => {
-       
-        //      firebaseConnect.on('value',(user)=>{
-        //          user.forEach(element => {
-        //     if(element.val().email=== email && element.val().password === password){
-        //                 // localStorage.setItem(key,value);
-        //                 console.log(element.val().email,element.val().password);
-        //     }
-        //     else console.log('haizzz');
-                        
-        //     });
-        // });
+      
+                 this.state.data.map((value,key) => {
+            if(value.email=== email && value.password === password){
+                        localStorage.setItem('user',JSON.stringify(value));
+                        console.log(value.email,value.password);
+            }
+            else alert('đăng nhập không thành công');                    
+            });
        
       }
     render() {
-        console.log(this.state.data);
         return (
             <div data-vide-bg="video/keyboard">
         <div className="main-container">
@@ -77,7 +75,7 @@ class Login extends Component {
                 <span className="icon2"><i className="fa fa-unlock-alt" aria-hidden="true" /></span>
                 <div className="checkbox-w3">
                     <span className="check-w3"><input type="checkbox" />Remember Me</span>
-                    <a href="#">Register</a>
+                    <Link to="/register">Register</Link>
                     <div className="clear" />
                 </div>
                 <div className="social-icons"> 
@@ -87,7 +85,7 @@ class Login extends Component {
                     <li><a href="#"><i className="fa fa-google-plus" aria-hidden="true" /></a></li> 
                     </ul>  
                 </div>
-              <Link to="/eh" ><input  type="submit" defaultValue onClick={(email,password) =>this.loadData(this.state.email,this.state.password)}/> 
+              <Link to="/" ><input  type="submit" defaultValue onClick={(email,password) =>this.loadData(this.state.email,this.state.password)}/> 
                </Link> </form>
             </div>
             </div>
