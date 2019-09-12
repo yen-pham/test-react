@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+import Login from './Login';
+import {firebaseConnect} from './firebaseConnect';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+import Register from './Register';
+import * as firebase from 'firebase';
 
-function App() {
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      email:'',
+      password:'',
+      login:false
+    }
+  }
+  pushData  = (email,password) => {
+    var connectData =firebase.database().ref('login');
+    connectData.push({
+      title : email,
+      content : password
+    });
+    console.log("");
+    alert('ban vua them du lieu vao firebase');
+  }
+  render() {
+    var connectData =firebase.database().ref('login'); 
+       
+     connectData.once('value').then(function(snapshot){
+        var data = snapshot.val();
+      console.log(snapshot.val());
+
+    });
   return (
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     {/* <Login email={this.state.email} password ={this.state.password} login={this.state.login}/> */}
+     <Route path="/" exact component={Login} />
+     <Route path="/register/" component={Register} />
     </div>
+    </Router>
   );
 }
+}
 
+ 
 export default App;
